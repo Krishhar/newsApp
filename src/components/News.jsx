@@ -3,17 +3,20 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Pagination from './Pagination';
+import fallbackData from './fallbackData.json'; // Import the local JSON file
 
 const News = ({ filter, searchTerm, currentPage, setCurrentPage }) => {
     const [news, setNews] = useState([]);
     const [featuredNews, setFeaturedNews] = useState([]);
     const [loading, setLoading] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
+    const [error, setError] = useState(null);
     const pageSize = 7;  // Set the number of posts per page
 
     const fetchData = async (page = 1) => {
         setLoading(true);
-        const apiKey = `714ef9b8a6ef47d19b4bda6f4f0d100f`;
+        setError(null);
+        const apiKey = `8d8ca57b1064482e95aed4cd77a77610`;
         let url = `https://newsapi.org/v2/top-headlines?country=in&page=${page}&pageSize=${pageSize}&apiKey=${apiKey}`;
 
         if (filter && filter !== 'All') {
@@ -35,7 +38,11 @@ const News = ({ filter, searchTerm, currentPage, setCurrentPage }) => {
             setFeaturedNews(data.articles.slice(0, 3)); // Select first 3 articles for the slider
             setTotalPages(Math.ceil(data.totalResults / pageSize));
         } catch (err) {
-            setError(err.message);
+            console.error("API fetch failed, fetching from local JSON", err);
+            setNews(fallbackData.articles);
+            setFeaturedNews(fallbackData.articles.slice(0, 3)); // Select first 3 articles for the slider
+            setTotalPages(Math.ceil(fallbackData.totalResults / pageSize));
+            setError("Failed to fetch data from API, showing fallback data.");
         } finally {
             setLoading(false);
         }
@@ -114,6 +121,7 @@ const News = ({ filter, searchTerm, currentPage, setCurrentPage }) => {
                     ))}
                 </div>
                 {loading && <div>Loading...</div>}
+                {error && <div className="text-red-500">{error}</div>}
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
