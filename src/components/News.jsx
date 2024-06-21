@@ -13,7 +13,7 @@ const News = ({ filter, searchTerm, currentPage, setCurrentPage }) => {
 
     const fetchData = async (page = 1) => {
         setLoading(true);
-        const apiKey = `8d8ca57b1064482e95aed4cd77a77610`;
+        const apiKey = `714ef9b8a6ef47d19b4bda6f4f0d100f`;
         let url = `https://newsapi.org/v2/top-headlines?country=in&page=${page}&pageSize=${pageSize}&apiKey=${apiKey}`;
 
         if (filter && filter !== 'All') {
