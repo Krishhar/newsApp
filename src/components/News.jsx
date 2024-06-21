@@ -39,9 +39,13 @@ const News = ({ filter, searchTerm, currentPage, setCurrentPage }) => {
             setTotalPages(Math.ceil(data.totalResults / pageSize));
         } catch (err) {
             console.error("API fetch failed, fetching from local JSON", err);
-            setNews(fallbackData.articles);
+
+            const start = (page - 1) * pageSize;
+            const end = start + pageSize;
+
+            setNews(fallbackData.articles.slice(start, end));
             setFeaturedNews(fallbackData.articles.slice(0, 3)); // Select first 3 articles for the slider
-            setTotalPages(Math.ceil(fallbackData.totalResults / pageSize));
+            setTotalPages(Math.ceil(fallbackData.articles.length / pageSize));
             setError("Failed to fetch data from API, showing fallback data.");
         } finally {
             setLoading(false);
