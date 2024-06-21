@@ -24,13 +24,21 @@ const News = ({ filter, searchTerm, currentPage, setCurrentPage }) => {
             url = `https://newsapi.org/v2/everything?q=${searchTerm}&page=${page}&pageSize=${pageSize}&apiKey=${apiKey}`;
         }
 
-        const res = await fetch(url);
-        const data = await res.json();
+        try {
+            const res = await fetch(url);
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status} ${res.statusText}`);
+            }
+            const data = await res.json();
 
-        setNews(data.articles);
-        setFeaturedNews(data.articles.slice(0, 3)); // Select first 3 articles for the slider
-        setTotalPages(Math.ceil(data.totalResults / pageSize));
-        setLoading(false);
+            setNews(data.articles);
+            setFeaturedNews(data.articles.slice(0, 3)); // Select first 3 articles for the slider
+            setTotalPages(Math.ceil(data.totalResults / pageSize));
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const settings = {
